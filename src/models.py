@@ -57,8 +57,8 @@ class ConvBlock(nn.Module):
         self.in_dim = in_dim
         self.out_dim = out_dim
 
-        self.conv0 = nn.Conv1d(in_dim, out_dim, kernel_size, padding="same",padding_mode="replicate") # change zeor -> replicate
-        self.conv1 = nn.Conv1d(out_dim, out_dim, kernel_size, padding="same",padding_mode="replicate") # change zeor -> replicate
+        self.conv0 = nn.Conv1d(in_dim, out_dim, kernel_size, padding="same") 
+        self.conv1 = nn.Conv1d(out_dim, out_dim, kernel_size, padding="same") 
         # self.conv2 = nn.Conv1d(out_dim, out_dim, kernel_size) # , padding="same")
         
         self.batchnorm0 = nn.BatchNorm1d(num_features=out_dim)
