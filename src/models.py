@@ -18,12 +18,14 @@ class BasicConvClassifier(nn.Module):
             ConvBlock(in_channels, hid_dim),
             ConvBlock(hid_dim, hid_dim),
         )
+        
+        self.blocks.apply(self.init_weights)
 
         self.head = nn.Sequential(
-            nn.AdaptiveAvgPool1d(1),
             Rearrange("b d 1 -> b d"),
             nn.Linear(hid_dim, num_classes),
         )
+        self.head.apply(self.init_weights)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         """_summary_
@@ -35,6 +37,11 @@ class BasicConvClassifier(nn.Module):
         X = self.blocks(X)
 
         return self.head(X)
+    
+    def init_weights(self, m):  # add He initialization 7/7
+        if type(m) == nn.Linear or type(m) == nn.Conv1d:
+            torch.nn.init.kaiming_normal_(m.weight)
+            m.bias.data.fill_(0.0)
 
 
 class ConvBlock(nn.Module):
@@ -43,21 +50,23 @@ class ConvBlock(nn.Module):
         in_dim,
         out_dim,
         kernel_size: int = 3,
-        p_drop: float = 0.1,
+        p_drop: float = 0.2, # change 0.1->0.2
     ) -> None:
         super().__init__()
         
         self.in_dim = in_dim
         self.out_dim = out_dim
 
-        self.conv0 = nn.Conv1d(in_dim, out_dim, kernel_size, padding="same")
-        self.conv1 = nn.Conv1d(out_dim, out_dim, kernel_size, padding="same")
+        self.conv0 = nn.Conv1d(in_dim, out_dim, kernel_size, padding="same",padding_mode="replicate") # change zeor -> replicate
+        self.conv1 = nn.Conv1d(out_dim, out_dim, kernel_size, padding="same",padding_mode="replicate") # change zeor -> replicate
         # self.conv2 = nn.Conv1d(out_dim, out_dim, kernel_size) # , padding="same")
         
         self.batchnorm0 = nn.BatchNorm1d(num_features=out_dim)
         self.batchnorm1 = nn.BatchNorm1d(num_features=out_dim)
 
+        self.adavgpool = nn.AdaptiveAvgPool1d(1) # add 7/7
         self.dropout = nn.Dropout(p_drop)
+        
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
         if self.in_dim == self.out_dim:
@@ -66,6 +75,9 @@ class ConvBlock(nn.Module):
             X = self.conv0(X)
 
         X = F.gelu(self.batchnorm0(X))
+        
+        X = self.adavgpool(X) # add 7/7
+        X = self.dropout(X) # add dropout 7/7
 
         X = self.conv1(X) + X  # skip connection
         X = F.gelu(self.batchnorm1(X))
@@ -73,4 +85,5 @@ class ConvBlock(nn.Module):
         # X = self.conv2(X)
         # X = F.glu(X, dim=-2)
 
+        X = self.adavgpool(X) # add 7/7
         return self.dropout(X)
