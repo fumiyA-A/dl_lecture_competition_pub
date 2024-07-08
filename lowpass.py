@@ -24,7 +24,7 @@ def lowpass_filter(data, cutoff, fs, order=5):
 # ローパスフィルタの適用
 cutoff = 50  # カットオフ周波数を50Hzに設定
 
-label = ["train", "val", "test"]
+label = ["train"]
 for split in label:
     data_dir = 'data/'+split+'_X'
     print(len(glob(os.path.join(data_dir, "*.npy"))))
