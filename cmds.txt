@@ -1,0 +1,6 @@
+nvidia-smi
+git clone https://github.com/fumiyA-A/dl_lecture_competition_pub.git
+cd dl_lecture_competition_pub/
+git checkout MEG-competition-omni
+gsutil cp gs://dl-common/2024/MEG/data-omni.zip ./data
+unzip data/data-omni.zip -d data/
