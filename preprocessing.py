@@ -70,7 +70,7 @@ for split in label:
         
         # フィルタリング後のデータを保存
         filtered_filename = os.path.join(save_dir, file_name)
-        np.save(filtered_filename, preprocess_data)
+        np.save(filtered_filename, preprocessed_data)
         
         if i % 1000 == 0:
             print(i)

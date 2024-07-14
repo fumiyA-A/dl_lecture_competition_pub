@@ -8,7 +8,7 @@ seed: 1234
 use_wandb: False
 
 X_dir: data/filtered
-y_dir: data
+y_dir: data/filtered
 
 # Evaluation
 model_path: 
