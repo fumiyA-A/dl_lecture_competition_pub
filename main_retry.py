@@ -49,6 +49,24 @@ def run(args: DictConfig):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # ------------------
+    #       Load
+    # ------------------
+    PATH = os.path.join(logdir, "model_last.pt")
+    checkpoint = torch.load(PATH)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    # optimizerのstateを現在のdeviceに移す。これをしないと、保存前後でdeviceの不整合が起こる可能性がある。
+    for state in optimizer.state.values():
+        for k, v in state.items():
+            if isinstance(v, torch.Tensor):
+                state[k] = v.to(device)
+    epoch = checkpoint['epoch']
+    loss = checkpoint['loss']
+
+    # ------------------
     #   Start training
     # ------------------  
     max_val_acc = 0
