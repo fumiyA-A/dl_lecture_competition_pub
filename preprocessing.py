@@ -35,11 +35,14 @@ def normalize_data(data):
 def preprocess_data(file_path):
     data = load_data(file_path)
     
+    # データを float64 型に変換
+    data = data.astype(np.float64)
+    
     # リサンプリング
     data = resample_data(data, original_rate=200, new_rate=100)
     
     # アーチファクト除去
-    data = remove_artifacts(data)
+#     data = remove_artifacts(data)
     
     # 正規化
     data = normalize_data(data)
@@ -68,9 +71,12 @@ for split in label:
         # フィルタリング後のデータを保存
         filtered_filename = os.path.join(save_dir, file_name)
         np.save(filtered_filename, preprocess_data)
+        
+        if i % 1000 == 0:
+            print(i)
     
     print(save_dir)
 
 
-import shutil
-shutil.make_archive('archive_data', format='zip', root_dir='data/filtered')
+# import shutil
+# shutil.make_archive('archive_data', format='zip', root_dir='data/filtered')
