@@ -1,4 +1,4 @@
-batch_size: 128
+batch_size: 256
 epochs: 20
 lr: 0.001
 
@@ -8,7 +8,7 @@ seed: 1234
 use_wandb: False
 
 X_dir: data/filtered
-y_dir: data/filtered
+y_dir: data
 
 # Evaluation
 model_path: 
