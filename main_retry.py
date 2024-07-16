@@ -127,7 +127,10 @@ def run(args: DictConfig):
     # ----------------------------------
     #  Start evaluation with best model
     # ----------------------------------
-    model.load_state_dict(torch.load(os.path.join(logdir, "model_best.pt"), map_location=args.device))
+    PATH = os.path.join(logdir, "model_last.pt")
+    checkpoint = torch.load(PATH)
+    model.load_state_dict(checkpoint['model_state_dict'], map_location=args.device)
+    
 
     preds = [] 
     model.eval()
