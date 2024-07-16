@@ -1,5 +1,5 @@
 batch_size: 256
-epochs: 20
+epochs: 17
 lr: 0.001
 
 device: cuda:0
@@ -7,7 +7,7 @@ num_workers: 4
 seed: 1234
 use_wandb: False
 
-X_dir: data/filtered
+X_dir: data
 y_dir: data
 
 # Evaluation
