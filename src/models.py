@@ -17,6 +17,8 @@ class BasicConvClassifier(nn.Module):
         self.blocks = nn.Sequential(
             ConvBlock(in_channels, hid_dim),
             ConvBlock(hid_dim, hid_dim),
+            nn.AdaptiveAvgPool1d(1),
+            nn.Dropout(0.3)
         )
         
         self.blocks.apply(self.init_weights)
@@ -50,7 +52,7 @@ class ConvBlock(nn.Module):
         in_dim,
         out_dim,
         kernel_size: int = 3,
-        p_drop: float = 0.3, # change 0.1->0.2
+        p_drop: float = 0.4, # change 0.1->0.2
     ) -> None:
         super().__init__()
         
@@ -75,15 +77,8 @@ class ConvBlock(nn.Module):
             X = self.conv0(X)
 
         X = F.gelu(self.batchnorm0(X))
-        
-        X = self.adavgpool(X) # add 7/7
-        X = self.dropout(X) # add dropout 7/7
 
         X = self.conv1(X) + X  # skip connection
         X = F.gelu(self.batchnorm1(X))
 
-        # X = self.conv2(X)
-        # X = F.glu(X, dim=-2)
-
-        X = self.adavgpool(X) # add 7/7
-        return self.dropout(X)
+        return X
